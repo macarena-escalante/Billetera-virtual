@@ -88,7 +88,11 @@ public class MovimientoService {
 
         emailService.SendEmail(cuentaDesde.getUsuario().getUserEmail(),"Realizaste una transferencia!!", 
             "Hola "+cuentaDesde.getUsuario().getUserEmail()+ " realizaste una transferencia exitosa a "+cuentaHasta.getUsuario().getUserEmail()+ "\n datos de la transferencia:\n" + "importe: $"+m2.getImporte() + "\n"+ "fecha: " + m2.getFechaMovimiento());
-    }
+   
+            emailService.SendEmail(cuentaHasta.getUsuario().getUserEmail(),"Te realizaron una transferencia!!", 
+            "Hola "+cuentaHasta.getUsuario().getUserEmail()+ " recibiste una transferencia exitosa de "+cuentaDesde.getUsuario().getUserEmail()+ "\n datos de la transferencia:\n" + "importe: $"+m2.getImporte() + "\n"+ "fecha: " + m2.getFechaMovimiento());
+   
+        }
 
     public void movimientoTransfencia (Billetera billeteraOrigen, String emailDestinatario, BigDecimal importe,
             String moneda, String concepto) {
