@@ -58,7 +58,7 @@ public class BilleteraController {
         SaldoResponse r = new SaldoResponse();
         r.billeteraId= id;
         r.moneda= moneda;
-        r.saldo= billeteraService.consultarSaldoDisponible(b, moneda);
+        r.saldo= billeteraService.consultarSaldo(b, moneda);
 
         return r;
     }

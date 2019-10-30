@@ -11,12 +11,16 @@ import ar.com.ada.api.billeteravirtual.entities.Persona;
 import ar.com.ada.api.billeteravirtual.entities.Usuario;
 import ar.com.ada.api.billeteravirtual.repo.UsuarioRepository;
 import ar.com.ada.api.billeteravirtual.security.Crypto;
+import ar.com.ada.api.billeteravirtual.sistema.comms.EmailService;
 
 /**
  * UsuarioService
  */
 @Service
 public class UsuarioService {
+
+    @Autowired
+    EmailService emailService;
 
     @Autowired
     UsuarioRepository repo;
@@ -37,6 +41,10 @@ public class UsuarioService {
         p.setUsuario(u);
 
         personaService.save(p);
+
+        emailService.SendEmail(u.getUserEmail(),"Bienvenido a la Billetera Virtual ADA!!!", 
+            "Hola "+p.getNombre()+"\nBienvenido a este hermoso proyecto hecho por todas las alumnas de ADA Backend 8va Mañana\n"+
+            "Ademas te regalamos 100 pesitos" );
 
         return p.getUsuario();
 

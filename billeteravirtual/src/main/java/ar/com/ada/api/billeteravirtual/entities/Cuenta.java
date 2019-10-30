@@ -31,9 +31,9 @@ public class Cuenta {
     private int cuentaId;
 
     private String moneda;
-    private double saldo;
+    private BigDecimal saldo = new BigDecimal(0);
     @Column(name="saldo_disponible")
-    private double saldoDisponible;
+    private BigDecimal saldoDisponible = new BigDecimal(0);
     @JsonIgnore
 
     @ManyToOne
@@ -56,11 +56,11 @@ public class Cuenta {
 
 
 
-    public double  getSaldoDisponible() {
+    public BigDecimal getSaldoDisponible() {
         return saldoDisponible;
     }
 
-    public void setSaldoDisponible(double saldoDisponible) {
+    public void setSaldoDisponible(BigDecimal saldoDisponible) {
         this.saldoDisponible = saldoDisponible;
     }
 
@@ -103,7 +103,7 @@ public class Cuenta {
         
     }
 
-    public void agregarPlata(int usuarioDe, String concepto, double importe, String detalle) {
+    public void agregarPlata(int usuarioDe, String concepto, BigDecimal importe, String detalle) {
         Movimiento m = new Movimiento();
 
         m.setCuenta(this);
@@ -120,12 +120,12 @@ public class Cuenta {
         this.movimientos.add(m);
     }
 
-    public void descontarPlata(int usuarioOr, String concepto, double importe, String detalle) {
+    public void descontarPlata(int usuarioOr, String concepto, BigDecimal importe, String detalle) {
         Movimiento m = new Movimiento();
 
         m.setCuenta(this);
         m.setConceptoDeOperacion("EGRESO");
-        m.setImporte(-importe);
+        m.setImporte(importe.negate());
         m.setConceptoDeOperacion(concepto);
         m.setFechaMovimiento(new Date());
         m.setDeUsuarioId(usuarioOr);
@@ -138,10 +138,10 @@ public class Cuenta {
 	public void agregarMovimiento(Movimiento m) {
 	}
 
-	public void setSaldo(double d) {
+	public void setSaldo(BigDecimal bigDecimal) {
 	}
 
-    public double getSaldo() {
+    public BigDecimal getSaldo() {
         return saldo;
     }
 

@@ -1,5 +1,6 @@
 package ar.com.ada.api.billeteravirtual.entities;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -26,7 +27,7 @@ public class Movimiento {
     @Column(name="fecha_movimiento")
     private Date fechaMovimiento;
     // private Coordenada ubicacion;
-    private double importe;
+    private BigDecimal importe;
     @Column(name= "tipo_de_operacion")
     private String tipoDeOperacion;
     @Column(name="concepto_de_operacion")
@@ -41,10 +42,10 @@ public class Movimiento {
     // private Usuario aUsuario;
     // private Cuenta cuentaDestino;
     // private Cuenta cuentaOrigen;
-    @Column(name = "de_cuenta_id")
+    @Column(name = "cuenta_origen_id")
     private int deCuentaId;
 
-    @Column(name = "a_cuenta_id")
+    @Column(name = "cuenta_destino_id")
     private int aCuentaId;
 
     @JsonIgnore
@@ -54,15 +55,10 @@ public class Movimiento {
     private Cuenta cuenta;
     
 
-    public double getImporte() {
+    public BigDecimal getImporte() {
         return importe;
     }
 
-    
-
-    public void setImporte(double importe) {
-        this.importe = importe;
-    }
 
     public String getTipoDeOperacion() {
         return tipoDeOperacion;
@@ -186,6 +182,13 @@ public class Movimiento {
     public void setaCuentaId(int aCuentaId) {
         this.aCuentaId = aCuentaId;
     }
+
+
+
+	public void setImporte(BigDecimal importe) {
+        this.importe = importe;
+	}
+
 
 
 }

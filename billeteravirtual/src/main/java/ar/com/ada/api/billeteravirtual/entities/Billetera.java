@@ -74,19 +74,19 @@ public class Billetera {
     public void setCuentas(List<Cuenta> cuentas) {
         this.cuentas = cuentas;   }
 
-    public void agregarPlata(double plata,String moneda, String concepto, String detalle) {
+    public void agregarPlata(BigDecimal plata,String moneda, String concepto, String detalle) {
         // Agarro el primero y le meto plata (esto se hacia antes porqeu le agregaba a la primer cuenta)
         //this.cuentas.get(0).agregarPlata(persona.getUsuario().getUsuarioId(), concepto, plata, detalle);
         this.buscarCuenta(moneda).agregarPlata(persona.getUsuario().getUsuarioId(), concepto, plata, detalle);
     
     }
 
-    public void descontarPlata(double plata,String moneda, String concepto, String detalle) {
+    public void descontarPlata(BigDecimal plata,String moneda, String concepto, String detalle) {
         this.buscarCuenta(moneda).descontarPlata(persona.getUsuario().getUsuarioId(), concepto, plata, detalle);
     
     }
 
-    public void transferencia (Billetera aBilletera,double plata,String moneda, String concepto, String detalle){
+    public void transferencia (Billetera aBilletera,BigDecimal plata,String moneda, String concepto, String detalle){
         this.descontarPlata(plata, moneda, concepto, detalle);
         aBilletera.agregarPlata(plata, moneda, concepto, detalle);
     }

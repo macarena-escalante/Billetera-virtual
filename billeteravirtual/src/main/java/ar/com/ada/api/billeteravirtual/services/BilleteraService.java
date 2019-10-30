@@ -1,5 +1,6 @@
 package ar.com.ada.api.billeteravirtual.services;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
 
@@ -77,8 +78,8 @@ public class BilleteraService {
         
     }*/
 
-    public double consultarSaldoDisponible(Billetera b, String moneda) {
-        double s = 0;
+    public BigDecimal consultarSaldoDisponible(Billetera b, String moneda) {
+        BigDecimal s = new BigDecimal(0);
         for (Cuenta c : b.getCuentas()) {
             if (c.getMoneda().equals(moneda)){
                 s = c.getSaldoDisponible();

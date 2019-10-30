@@ -1,5 +1,6 @@
 package ar.com.ada.api.billeteravirtual.services;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +8,16 @@ import org.springframework.stereotype.Service;
 
 import ar.com.ada.api.billeteravirtual.entities.*;
 import ar.com.ada.api.billeteravirtual.repo.MovimientoRepository;
+import ar.com.ada.api.billeteravirtual.sistema.comms.EmailService;
 
 /**
  * MovimientoService
  */
 @Service
 public class MovimientoService {
+
+    @Autowired
+    EmailService emailService;
 
     @Autowired
     BilleteraService billeteraService;
@@ -30,7 +35,7 @@ public class MovimientoService {
 
     public Movimiento regalarSaldoInicial(Persona p, Cuenta c) {
         Movimiento m = new Movimiento();
-        m.setImporte(320);
+        m.setImporte(new BigDecimal(320));
         m.setDeUsuarioId(p.getUsuario().getUsuarioId());
         m.setaUsuarioId(p.getUsuario().getUsuarioId());
         m.setaCuentaId(c.getCuentaId());
@@ -45,11 +50,11 @@ public class MovimientoService {
         return m;
     }
 
-    public void movimientoTransfencia(Billetera billeteraOrigen, Billetera billeteraDestino, double importe,
+    public void movimientoTransfencia(Billetera billeteraOrigen, Billetera billeteraDestino, BigDecimal importe,
             Cuenta cuentaDesde, Cuenta cuentaHasta, String concepto) {
         Movimiento m = new Movimiento();
-        m.setImporte(-importe);
-        // m.setCuenta(b1.getCuenta(0));
+        m.setImporte(importe.negate());
+        m.setCuenta(billeteraOrigen.getCuenta(0));
         m.setConceptoDeOperacion("Envío");
         m.setTipoDeOperacion("Transferencia");
         m.setFechaMovimiento(new Date());
@@ -57,8 +62,8 @@ public class MovimientoService {
         m.setaCuentaId(cuentaHasta.getCuentaId());
         m.setDeUsuarioId(cuentaDesde.getUsuario().getUsuarioId());
         m.setaUsuarioId(cuentaHasta.getUsuario().getUsuarioId());
-        cuentaDesde.setSaldo(cuentaDesde.getSaldo() - importe);
-        cuentaDesde.setSaldoDisponible(cuentaDesde.getSaldoDisponible() - importe);
+        cuentaDesde.setSaldo(cuentaDesde.getSaldo().add(importe.negate()));
+        cuentaDesde.setSaldoDisponible(cuentaDesde.getSaldoDisponible().add(importe.negate()));
         cuentaDesde.agregarMovimiento(m);
 
         movimientoRepository.save(m);
@@ -66,7 +71,7 @@ public class MovimientoService {
 
         Movimiento m2 = new Movimiento();
         m2.setImporte(importe);
-        // m2.setCuenta(b1.getCuenta(0)); deberia ser b2?
+        m2.setCuenta(billeteraDestino.getCuenta(0));
         m2.setConceptoDeOperacion("Recibo");
         m2.setTipoDeOperacion("Transferencia");
         m2.setFechaMovimiento(new Date());
@@ -74,15 +79,18 @@ public class MovimientoService {
         m2.setaCuentaId(cuentaHasta.getCuentaId());
         m2.setDeUsuarioId(cuentaDesde.getUsuario().getUsuarioId());
         m2.setaUsuarioId(cuentaHasta.getUsuario().getUsuarioId());
-        cuentaHasta.setSaldo(cuentaHasta.getSaldo() + importe);
-        cuentaHasta.setSaldoDisponible(cuentaHasta.getSaldoDisponible() + importe);
+        cuentaHasta.setSaldo(cuentaHasta.getSaldo().add(importe));
+        cuentaHasta.setSaldoDisponible(cuentaHasta.getSaldoDisponible().add(importe.negate()));
         cuentaHasta.agregarMovimiento(m2);
 
         movimientoRepository.save(m2);
         billeteraService.save(billeteraDestino);
+
+        emailService.SendEmail(cuentaDesde.getUsuario().getUserEmail(),"Realizaste una transferencia!!", 
+            "Hola "+cuentaDesde.getUsuario().getUserEmail()+ " realizaste una transferencia exitosa a "+cuentaHasta.getUsuario().getUserEmail()+ "\n datos de la transferencia:\n" + "importe: $"+m2.getImporte() + "\n"+ "fecha: " + m2.getFechaMovimiento());
     }
 
-    public void movimientoTransfencia (Billetera billeteraOrigen, String emailDestinatario, double importe,
+    public void movimientoTransfencia (Billetera billeteraOrigen, String emailDestinatario, BigDecimal importe,
             String moneda, String concepto) {
 
         Billetera billeteraDestino;
